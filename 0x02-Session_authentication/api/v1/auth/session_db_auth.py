@@ -2,7 +2,7 @@
 """session database module."""
 
 from .session_exp_auth import SessionExpAuth
-from models import UserSession
+from models.user_session import UserSession
 from datetime import datetime, timedelta
 
 
