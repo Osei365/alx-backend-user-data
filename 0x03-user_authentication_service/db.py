@@ -34,21 +34,23 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """Adds a new user to the database.
         """
+        new_user = User(email=email, hashed_password=hashed_password)
         try:
-            new_user = User(email=email, hashed_password=hashed_password)
             self._session.add(new_user)
             self._session.commit()
-        except Exception:
+        except Exception as e:
+            print(f"Error adding user to database: {e}")
             self._session.rollback()
-            new_user = None
+            raise
         return new_user
 
     def find_user_by(self, **kwargs) -> User:
         """finds a user."""
-        for key, value in kwargs.items():
-            if not hasattr(User, key):
-                raise InvalidRequestError()
-        user = self._session.query(User).filter_by(**kwargs).first()
-        if user is None:
+        session = self._session
+        try:
+            user = session.query(User).filter_by(**kwargs).one()
+        except NoResultFound:
             raise NoResultFound()
+        except InvalidRequestError:
+            raise InvalidRequestError()
         return user
