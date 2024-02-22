@@ -65,3 +65,24 @@ class DB:
         except InvalidRequestError:
             raise InvalidRequestError()
         return user
+
+    def update_user(self, user_id: int, **kwargs: Dict[str, str]) -> None:
+        """updates the database with a user."""
+        try:
+            # Find the user with the given user ID
+            user = self.find_user_by(id=user_id)
+        except NoResultFound:
+            raise ValueError("User with id {} not found".format(user_id))
+
+        # Update user's attributes
+        for key, value in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError("User has no attribute {}".format(key))
+            setattr(user, key, value)
+
+        try:
+            # Commit changes to the database
+            self._session.commit()
+        except InvalidRequestError:
+            # Raise error if an invalid request is made
+            raise ValueError("Invalid request")
