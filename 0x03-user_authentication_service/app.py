@@ -45,13 +45,14 @@ def sessionify():
 @app.route('/sessions', methods=['DELETE'])
 def logout():
     """log outs and destroys session."""
-    session_id = request.cookies.get('session_id')
+    session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
-    if user is not None:
-        AUTH.destroy_session(user.id)
-        redirect('/')
-    else:
+    # If no user is found, abort the request with a 403 Forbidden error
+    if user is None:
         abort(403)
+    # Destroy the session associated with the user
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 @app.route('/profile', methods=['GET'])
 def profile():
