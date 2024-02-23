@@ -42,6 +42,7 @@ def sessionify():
     else:
         abort(401)
 
+
 @app.route('/sessions', methods=['DELETE'])
 def logout():
     """log outs and destroys session."""
@@ -53,6 +54,7 @@ def logout():
     # Destroy the session associated with the user
     AUTH.destroy_session(user.id)
     return redirect("/")
+
 
 @app.route('/profile', methods=['GET'])
 def profile():
